@@ -3,6 +3,7 @@ package it.alessandro.vendramini.applicazioneprogettofilm.adapters;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Color;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -24,16 +25,20 @@ import it.alessandro.vendramini.applicazioneprogettofilm.R;
 import it.alessandro.vendramini.applicazioneprogettofilm.activities.DettaglioActivity;
 import it.alessandro.vendramini.applicazioneprogettofilm.activities.MainActivity;
 import it.alessandro.vendramini.applicazioneprogettofilm.data.model.Film;
+import it.alessandro.vendramini.applicazioneprogettofilm.local.FilmDB;
+import it.alessandro.vendramini.applicazioneprogettofilm.local.FilmTableHelper;
 import it.alessandro.vendramini.applicazioneprogettofilm.util.Singleton;
 
 public class FilmAdapter extends RecyclerView.Adapter<FilmViewHolder> {
 
     private Context context;
+    private Cursor cursor;
     private List<Film> listaFilm = new ArrayList<>();
     private int itemSelezionato = -1;
 
-    public FilmAdapter(Context context) {
+    public FilmAdapter(Context context, Cursor cursor) {
         this.context = context;
+        this.cursor = cursor;
     }
 
     public void setListaFilm(List<Film> listaFilm) {
@@ -60,7 +65,6 @@ public class FilmAdapter extends RecyclerView.Adapter<FilmViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull final FilmViewHolder holder, final int position) {
-
         Film filmAttuale = listaFilm.get(position);
 
         holder.textView_nomeFilm.setText(filmAttuale.getTitolo());
