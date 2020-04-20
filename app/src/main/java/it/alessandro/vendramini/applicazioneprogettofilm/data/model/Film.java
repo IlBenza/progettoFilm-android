@@ -19,6 +19,14 @@ public class Film {
     @SerializedName("overview")
     private String descrizione;
 
+    public Film(long idFilm, String titolo, Double valutazione, String dataRilascio, String descrizione) {
+        this.idFilm = idFilm;
+        this.titolo = titolo;
+        this.valutazione = valutazione;
+        this.dataRilascio = dataRilascio;
+        this.descrizione = descrizione;
+    }
+
     public long getIdFilm() {
         return idFilm;
     }

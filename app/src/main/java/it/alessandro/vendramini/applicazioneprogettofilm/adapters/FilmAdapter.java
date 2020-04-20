@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CursorAdapter;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -32,13 +33,11 @@ import it.alessandro.vendramini.applicazioneprogettofilm.util.Singleton;
 public class FilmAdapter extends RecyclerView.Adapter<FilmViewHolder> {
 
     private Context context;
-    private Cursor cursor;
     private List<Film> listaFilm = new ArrayList<>();
     private int itemSelezionato = -1;
 
-    public FilmAdapter(Context context, Cursor cursor) {
+    public FilmAdapter(Context context) {
         this.context = context;
-        this.cursor = cursor;
     }
 
     public void setListaFilm(List<Film> listaFilm) {
@@ -65,9 +64,11 @@ public class FilmAdapter extends RecyclerView.Adapter<FilmViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull final FilmViewHolder holder, final int position) {
+
         Film filmAttuale = listaFilm.get(position);
 
         holder.textView_nomeFilm.setText(filmAttuale.getTitolo());
+
         Glide.with(context).load(filmAttuale.getImmaginePrimoPoster()).into(holder.imageView_fotoCopertina);
 
         holder.textView_dataRilascio.setText(filmAttuale.getDataRilascio());
@@ -82,7 +83,12 @@ public class FilmAdapter extends RecyclerView.Adapter<FilmViewHolder> {
             holder.textView_valutazione.setBackgroundResource(R.drawable.rounded_values_black);
         }
 
-        holder.textView_valutazione.setText(filmAttuale.getValutazione().toString());
+        if(filmAttuale.getValutazione() != 10.0){
+            holder.textView_valutazione.setText(filmAttuale.getValutazione().toString());
+        } else {
+            holder.textView_valutazione.setText(" 10 ");
+        }
+
 
         holder.layout_singoloFilm.setBackgroundResource(R.drawable.rounded_background);
 
@@ -91,6 +97,24 @@ public class FilmAdapter extends RecyclerView.Adapter<FilmViewHolder> {
         }
 
         //Click sul singolo oggetto
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                int itemPrecedente = itemSelezionato;
+                itemSelezionato = position;
+
+                notifyItemChanged(itemPrecedente);
+                notifyItemChanged(position);
+
+                Intent intent = new Intent(context, DettaglioActivity.class);
+                intent.putExtra(Singleton.IMAGE_KEY, listaFilm.get(position).getImmagineSecondoPoster());
+                intent.putExtra(Singleton.TITLE_KEY, listaFilm.get(position).getTitolo());
+                intent.putExtra(Singleton.DESCRIPTION_KEY, listaFilm.get(position).getDescrizione());
+                context.startActivity(intent);
+            }
+        });
+        /*
         holder.layout_singoloFilm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -108,6 +132,7 @@ public class FilmAdapter extends RecyclerView.Adapter<FilmViewHolder> {
                 context.startActivity(intent);
             }
         });
+        */
     }
 
     @Override

@@ -18,5 +18,6 @@ public class FilmViewHolder extends RecyclerView.ViewHolder {
 
     public FilmViewHolder(@NonNull View itemView) {
         super(itemView);
+
     }
 }
