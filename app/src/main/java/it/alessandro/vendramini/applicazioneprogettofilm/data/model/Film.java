@@ -1,5 +1,7 @@
 package it.alessandro.vendramini.applicazioneprogettofilm.data.model;
 
+import androidx.annotation.NonNull;
+
 import com.google.gson.annotations.SerializedName;
 
 public class Film {
@@ -19,12 +21,14 @@ public class Film {
     @SerializedName("overview")
     private String descrizione;
 
-    public Film(long idFilm, String titolo, Double valutazione, String dataRilascio, String descrizione) {
+    public Film(long idFilm, String titolo, Double valutazione, String dataRilascio, String descrizione, String immaginePrimoPoster, String immagineSecondoPoster) {
         this.idFilm = idFilm;
         this.titolo = titolo;
         this.valutazione = valutazione;
         this.dataRilascio = dataRilascio;
         this.descrizione = descrizione;
+        this.immaginePrimoPoster = immaginePrimoPoster;
+        this.immagineSecondoPoster = immagineSecondoPoster;
     }
 
     public long getIdFilm() {

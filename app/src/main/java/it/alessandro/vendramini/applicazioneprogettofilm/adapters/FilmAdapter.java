@@ -24,10 +24,7 @@ import java.util.List;
 
 import it.alessandro.vendramini.applicazioneprogettofilm.R;
 import it.alessandro.vendramini.applicazioneprogettofilm.activities.DettaglioActivity;
-import it.alessandro.vendramini.applicazioneprogettofilm.activities.MainActivity;
 import it.alessandro.vendramini.applicazioneprogettofilm.data.model.Film;
-import it.alessandro.vendramini.applicazioneprogettofilm.local.FilmDB;
-import it.alessandro.vendramini.applicazioneprogettofilm.local.FilmTableHelper;
 import it.alessandro.vendramini.applicazioneprogettofilm.util.Singleton;
 
 public class FilmAdapter extends RecyclerView.Adapter<FilmViewHolder> {
@@ -42,6 +39,14 @@ public class FilmAdapter extends RecyclerView.Adapter<FilmViewHolder> {
 
     public void setListaFilm(List<Film> listaFilm) {
         this.listaFilm = listaFilm;
+    }
+
+    public  void addListaFilm(List<Film> listaFilm) {
+        if(this.listaFilm.isEmpty()){
+            this.listaFilm = listaFilm;
+        } else {
+            this.listaFilm.addAll(listaFilm);
+        }
     }
 
     @NonNull
@@ -69,7 +74,12 @@ public class FilmAdapter extends RecyclerView.Adapter<FilmViewHolder> {
 
         holder.textView_nomeFilm.setText(filmAttuale.getTitolo());
 
-        Glide.with(context).load(filmAttuale.getImmaginePrimoPoster()).into(holder.imageView_fotoCopertina);
+        //Cambio immagine nel caso fosse vuota
+        if (!filmAttuale.getImmaginePrimoPoster().equals("https://image.tmdb.org/t/p/w500/null")){
+            Glide.with(context).load(filmAttuale.getImmaginePrimoPoster()).into(holder.imageView_fotoCopertina);
+        } else {
+            Glide.with(context).load(R.drawable.ic_no_image_512p).into(holder.imageView_fotoCopertina);
+        }
 
         holder.textView_dataRilascio.setText(filmAttuale.getDataRilascio());
 
@@ -86,9 +96,8 @@ public class FilmAdapter extends RecyclerView.Adapter<FilmViewHolder> {
         if(filmAttuale.getValutazione() != 10.0){
             holder.textView_valutazione.setText(filmAttuale.getValutazione().toString());
         } else {
-            holder.textView_valutazione.setText(" 10 ");
+            holder.textView_valutazione.setText("10.");
         }
-
 
         holder.layout_singoloFilm.setBackgroundResource(R.drawable.rounded_background);
 
@@ -114,25 +123,6 @@ public class FilmAdapter extends RecyclerView.Adapter<FilmViewHolder> {
                 context.startActivity(intent);
             }
         });
-        /*
-        holder.layout_singoloFilm.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                int itemPrecedente = itemSelezionato;
-                itemSelezionato = position;
-
-                notifyItemChanged(itemPrecedente);
-                notifyItemChanged(position);
-
-                Intent intent = new Intent(context, DettaglioActivity.class);
-                intent.putExtra(Singleton.IMAGE_KEY, listaFilm.get(position).getImmagineSecondoPoster());
-                intent.putExtra(Singleton.TITLE_KEY, listaFilm.get(position).getTitolo());
-                intent.putExtra(Singleton.DESCRIPTION_KEY, listaFilm.get(position).getDescrizione());
-                context.startActivity(intent);
-            }
-        });
-        */
     }
 
     @Override

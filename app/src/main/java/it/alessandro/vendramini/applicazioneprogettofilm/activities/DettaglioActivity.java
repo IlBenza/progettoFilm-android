@@ -36,9 +36,24 @@ public class DettaglioActivity extends AppCompatActivity {
             String testo_titolo = getIntent().getStringExtra(Singleton.TITLE_KEY);
             String testo_descrizione = getIntent().getStringExtra(Singleton.DESCRIPTION_KEY);
 
-            Glide.with(this).load(testo_fotoCopertinaDue).into(imageView_fotoCopertinaDue);
+            Log.d(Singleton.LOG_TAG, "Ecco la scritta:"+testo_fotoCopertinaDue);
+
+            //Cambio immagine nel caso fosse vuota
+            if (!testo_fotoCopertinaDue.equals("https://image.tmdb.org/t/p/w500/null")){
+                Glide.with(this).load(testo_fotoCopertinaDue).into(imageView_fotoCopertinaDue);
+            } else {
+                Log.d(Singleton.LOG_TAG, "SONO QUI");
+                Glide.with(this).load(R.drawable.ic_no_image_512p).into(imageView_fotoCopertinaDue);
+            }
+
             textView_titolo.setText(testo_titolo);
-            getTextView_descrizione.setText(testo_descrizione);
+
+            if(testo_descrizione.equals("")){
+                getTextView_descrizione.setText("Non è presente alcuna descrizione del film: " + testo_titolo);
+            } else {
+                getTextView_descrizione.setText(testo_descrizione);
+            }
+
         }
     }
 

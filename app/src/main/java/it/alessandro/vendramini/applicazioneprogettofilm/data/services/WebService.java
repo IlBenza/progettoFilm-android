@@ -37,10 +37,9 @@ public class WebService {
         return instance;
     }
 
-    public void getFilm(final IWebService callback) {
+    public void getFilm(final IWebService callback, String language, int page) {
 
-        // TODO cambiare BuildConfig.THE_MOVIE_DB_API_KEY perchè non funziona se killo l'app
-        Call<Results> call = iService.getMovieUpcoming(BuildConfig.THE_MOVIE_DB_API_KEY, "it", 1);
+        Call<Results> call = iService.getMovieUpcoming(BuildConfig.THE_MOVIE_DB_API_KEY, language, page);
         call.enqueue(new Callback<Results>() {
             @Override
             public void onResponse(Call<Results> call, Response<Results> response) {
