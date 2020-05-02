@@ -26,8 +26,6 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -52,6 +50,7 @@ public class MainActivity extends AppCompatActivity{
     private GridLayoutManager gridLayoutManager;
     private WebService webService;
     private ProgressBar progressBar_caricamento;
+    private ProgressBar getProgressBar_caricamentoLista;
     private ImageView imageView_logo;
 
     int pageNumber = 1;
@@ -63,7 +62,6 @@ public class MainActivity extends AppCompatActivity{
         @Override
         public void onTodosFetched(boolean success, List<Film> listaFilm, int errorCode, String errorMessage) {
             if (success) {
-
                 filmAdapter.addListaFilm(listaFilm);
                 filmAdapter.notifyDataSetChanged();
                 progressBar_caricamento.setVisibility(View.GONE);
@@ -77,6 +75,7 @@ public class MainActivity extends AppCompatActivity{
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
+                        getProgressBar_caricamentoLista.setVisibility(View.GONE);
                         progressBar_caricamento.setVisibility(View.GONE);
                         imageView_logo.setVisibility(View.GONE);
                         recyclerView_listaFilm.setVisibility(View.GONE);
@@ -85,6 +84,7 @@ public class MainActivity extends AppCompatActivity{
                         //Leggo nel db
                         filmAdapter.setListaFilm(leggiDatiNelDB());
                         filmAdapter.notifyDataSetChanged();
+                        recyclerView_listaFilm.setVisibility(View.VISIBLE);
                     }
                 }, 5000);
             }
@@ -101,6 +101,7 @@ public class MainActivity extends AppCompatActivity{
         recyclerView_listaFilm = findViewById(R.id.recyclerView_listaFilm);
         progressBar_caricamento = findViewById(R.id.progressBar_caricamento);
         imageView_logo = findViewById(R.id.imageView_logo);
+        getProgressBar_caricamentoLista = findViewById(R.id.progressBar_caricamentoLista);
 
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
             gridLayoutManager = new GridLayoutManager(this, 2);
@@ -113,6 +114,7 @@ public class MainActivity extends AppCompatActivity{
         filmAdapter = new FilmAdapter(this);
         recyclerView_listaFilm.setAdapter(filmAdapter);
 
+        getProgressBar_caricamentoLista.setVisibility(View.GONE);
         progressBar_caricamento.setVisibility(View.VISIBLE);
         imageView_logo.setVisibility(View.VISIBLE);
         recyclerView_listaFilm.setVisibility(View.GONE);
@@ -148,13 +150,15 @@ public class MainActivity extends AppCompatActivity{
     }
 
     private void caricoAltriDati(){
+        getProgressBar_caricamentoLista.setVisibility(View.VISIBLE);
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
                 pageNumber ++;
                 webService.getFilm(webServerListener, Locale.getDefault().getLanguage(), pageNumber);
+                getProgressBar_caricamentoLista.setVisibility(View.GONE);
             }
-        }, 500);
+        }, 2000);
     }
 
     private void salvaNelDB(List<Film> listaFilm){
