@@ -6,10 +6,12 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toolbar;
 
 import com.bumptech.glide.Glide;
 
 import it.alessandro.vendramini.applicazioneprogettofilm.R;
+import it.alessandro.vendramini.applicazioneprogettofilm.adapters.FilmAdapter;
 import it.alessandro.vendramini.applicazioneprogettofilm.util.Singleton;
 
 public class DettaglioActivity extends AppCompatActivity {
@@ -36,13 +38,10 @@ public class DettaglioActivity extends AppCompatActivity {
             String testo_titolo = getIntent().getStringExtra(Singleton.TITLE_KEY);
             String testo_descrizione = getIntent().getStringExtra(Singleton.DESCRIPTION_KEY);
 
-            Log.d(Singleton.LOG_TAG, "Ecco la scritta:"+testo_fotoCopertinaDue);
-
             //Cambio immagine nel caso fosse vuota
-            if (!testo_fotoCopertinaDue.equals("https://image.tmdb.org/t/p/w500/null")){
-                Glide.with(this).load(testo_fotoCopertinaDue).into(imageView_fotoCopertinaDue);
+            if (testo_fotoCopertinaDue != null){
+                Glide.with(this).load(FilmAdapter.httpsHead + testo_fotoCopertinaDue).into(imageView_fotoCopertinaDue);
             } else {
-                Log.d(Singleton.LOG_TAG, "SONO QUI");
                 Glide.with(this).load(R.drawable.ic_no_image_512p).into(imageView_fotoCopertinaDue);
             }
 

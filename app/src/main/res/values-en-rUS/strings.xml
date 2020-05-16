@@ -1,5 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Applicazione Progetto Film</string>
     <string name="app_title">The movie DB</string>
-    <string name="app_json_type_name">Film in arrivo</string>
+    <string name="app_json_type_name">Upcoming movies</string>
 </resources>

@@ -2,9 +2,8 @@ package it.alessandro.vendramini.applicazioneprogettofilm.activities;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.ContentValues;
@@ -13,17 +12,17 @@ import android.content.res.Configuration;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
-import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AbsListView;
-import android.widget.GridLayout;
+import android.widget.AdapterView;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.SearchView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -35,12 +34,13 @@ import it.alessandro.vendramini.applicazioneprogettofilm.adapters.FilmAdapter;
 import it.alessandro.vendramini.applicazioneprogettofilm.data.model.Film;
 import it.alessandro.vendramini.applicazioneprogettofilm.data.services.IWebService;
 import it.alessandro.vendramini.applicazioneprogettofilm.data.services.WebService;
+import it.alessandro.vendramini.applicazioneprogettofilm.fragments.AggiungiPreferitoDialogFragment;
+import it.alessandro.vendramini.applicazioneprogettofilm.fragments.IAggiungiPreferitoDialogFragmentListener;
 import it.alessandro.vendramini.applicazioneprogettofilm.local.FilmDB;
 import it.alessandro.vendramini.applicazioneprogettofilm.local.FilmTableHelper;
-import it.alessandro.vendramini.applicazioneprogettofilm.util.Singleton;
 
 
-public class MainActivity extends AppCompatActivity{
+public class MainActivity extends AppCompatActivity implements IAggiungiPreferitoDialogFragmentListener {
 
     final String tableName = FilmTableHelper.TABLE_NAME;
     final String sortOrder = FilmTableHelper.ID_FILM + " ASC ";
@@ -67,6 +67,7 @@ public class MainActivity extends AppCompatActivity{
                 progressBar_caricamento.setVisibility(View.GONE);
                 imageView_logo.setVisibility(View.GONE);
                 recyclerView_listaFilm.setVisibility(View.VISIBLE);
+                getSupportActionBar().setTitle(R.string.app_json_type_name);
 
                 //Salvo i dati nel db
                 salvaNelDB(listaFilm);
@@ -96,9 +97,10 @@ public class MainActivity extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
         webService = WebService.getInstance();
 
-        recyclerView_listaFilm = findViewById(R.id.recyclerView_listaFilm);
+        recyclerView_listaFilm = findViewById(R.id.recyclerView_listaFilmPreferiti);
         progressBar_caricamento = findViewById(R.id.progressBar_caricamento);
         imageView_logo = findViewById(R.id.imageView_logo);
         getProgressBar_caricamentoLista = findViewById(R.id.progressBar_caricamentoLista);
@@ -173,7 +175,10 @@ public class MainActivity extends AppCompatActivity{
                 contentValues.put(FilmTableHelper.TITOLO, singoloFilm.getTitolo());
                 contentValues.put(FilmTableHelper.DATA_RILASCIO, singoloFilm.getDataRilascio());
                 contentValues.put(FilmTableHelper.DESCRIZIONE, singoloFilm.getDescrizione());
+                contentValues.put(FilmTableHelper.STRINGA_IMMAGINE_UNO, singoloFilm.getImmaginePrimoPoster());
+                contentValues.put(FilmTableHelper.STRINGA_IMMAGINE_DUE, singoloFilm.getImmagineSecondoPoster());
                 contentValues.put(FilmTableHelper.VALUTAZIONE, singoloFilm.getValutazione());
+                contentValues.put(FilmTableHelper.PREFERITO, singoloFilm.isPreferito());
                 sqLiteDatabase.insert(tableName, null, contentValues);
             }
         }
@@ -210,9 +215,80 @@ public class MainActivity extends AppCompatActivity{
             Double valutazione = cursor.getDouble(cursor.getColumnIndex(FilmTableHelper.VALUTAZIONE));
             String dataRilascio = cursor.getString(cursor.getColumnIndex(FilmTableHelper.DATA_RILASCIO));
             String descrizione = cursor.getString(cursor.getColumnIndex(FilmTableHelper.DESCRIZIONE));
-            listaTemporanea.add(new Film(idFilm, titolo, valutazione, dataRilascio, descrizione, null, null));
+            String stringaDescrizioneUno = cursor.getString(cursor.getColumnIndex(FilmTableHelper.STRINGA_IMMAGINE_UNO));
+            String stringaDescrizioneDue = cursor.getString(cursor.getColumnIndex(FilmTableHelper.STRINGA_IMMAGINE_DUE));
+            boolean isPreferito = (cursor.getInt(cursor.getColumnIndex(FilmTableHelper.PREFERITO)) == 1);
+            listaTemporanea.add(new Film(idFilm, titolo, valutazione, dataRilascio, descrizione, stringaDescrizioneUno, stringaDescrizioneDue, isPreferito));
         }
 
         return listaTemporanea;
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_layout, menu);
+
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+
+        //Click sul Preferiti
+        if(item.getItemId() == R.id.favorite_icon){
+
+            Intent intent = new Intent(this, FilmPreferitiActivity.class);
+            startActivity(intent);
+
+        } else if(item.getItemId() == R.id.search_icon){
+
+            SearchView searchView = (SearchView) item.getActionView();
+            searchView.setQueryHint("Cerca film");
+
+            searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+                @Override
+                public boolean onQueryTextSubmit(String query) {
+                    return false;
+                }
+
+                @Override
+                public boolean onQueryTextChange(String newText) {
+                    filmAdapter.getFilter().filter(newText);
+                    return true;
+                }
+
+            });
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onPositivePressed(long filmId) {
+        //Salva nei preferiti
+        Toast.makeText(this, "SI", Toast.LENGTH_SHORT).show();
+
+        //Aggiorno o dati
+        SQLiteDatabase sqLiteDatabase = new FilmDB(this).getReadableDatabase();
+
+        String nameId = Long.toString(filmId);
+        //Cursor cursor = sqLiteDatabase.query(tableName, null, FilmTableHelper.ID_FILM + " = ?", new String[] { nameId },
+                //null, null, sortOrder);
+
+
+
+
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(FilmTableHelper.PREFERITO, true);
+
+        sqLiteDatabase.update(tableName, contentValues, FilmTableHelper.ID_FILM + " = ?", new String[] { nameId });
+    }
+
+    @Override
+    public void onNegativePressed() {
+        //Nulla
+        Toast.makeText(this, "NO", Toast.LENGTH_SHORT).show();
     }
 }

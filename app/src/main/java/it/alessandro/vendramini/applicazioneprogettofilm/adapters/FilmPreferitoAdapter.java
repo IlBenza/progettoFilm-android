@@ -1,24 +1,14 @@
 package it.alessandro.vendramini.applicazioneprogettofilm.adapters;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
-import android.graphics.Color;
-import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CursorAdapter;
 import android.widget.Filter;
 import android.widget.Filterable;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -26,40 +16,29 @@ import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.SimpleTimeZone;
 
 import it.alessandro.vendramini.applicazioneprogettofilm.R;
 import it.alessandro.vendramini.applicazioneprogettofilm.activities.DettaglioActivity;
 import it.alessandro.vendramini.applicazioneprogettofilm.activities.MainActivity;
 import it.alessandro.vendramini.applicazioneprogettofilm.data.model.Film;
 import it.alessandro.vendramini.applicazioneprogettofilm.fragments.AggiungiPreferitoDialogFragment;
-import it.alessandro.vendramini.applicazioneprogettofilm.fragments.IAggiungiPreferitoDialogFragmentListener;
 import it.alessandro.vendramini.applicazioneprogettofilm.util.Singleton;
 
-public class FilmAdapter extends RecyclerView.Adapter<FilmViewHolder> implements Filterable {
+public class FilmPreferitoAdapter extends RecyclerView.Adapter<FilmViewHolder> implements Filterable {
 
     public static final String httpsHead = "https://image.tmdb.org/t/p/w500/";
 
     private Context context;
-    private FragmentManager fragmentManager;
     private List<Film> listaFilm = new ArrayList<>();
     private List<Film> listaFilmEx;
     private int itemSelezionato = -1;
 
-    public FilmAdapter(Context context) {
+    public FilmPreferitoAdapter(Context context) {
         this.context = context;
     }
 
     public void setListaFilm(List<Film> listaFilm) {
         this.listaFilm = listaFilm;
-    }
-
-    public void addListaFilm(List<Film> listaFilm) {
-        if(this.listaFilm.isEmpty()){
-            this.listaFilm = listaFilm;
-        } else {
-            this.listaFilm.addAll(listaFilm);
-        }
     }
 
     @NonNull
@@ -75,8 +54,6 @@ public class FilmAdapter extends RecyclerView.Adapter<FilmViewHolder> implements
         filmViewHolder.textView_dataRilascio = convertView.findViewById(R.id.textView_dataRilascio);
         filmViewHolder.textView_valutazione = convertView.findViewById(R.id.textView_valutazione);
         filmViewHolder.layout_singoloFilm = convertView.findViewById(R.id.layout_singoloFilm);
-
-        fragmentManager = ((MainActivity) context).getSupportFragmentManager();
 
         return filmViewHolder;
     }
@@ -135,18 +112,6 @@ public class FilmAdapter extends RecyclerView.Adapter<FilmViewHolder> implements
                 intent.putExtra(Singleton.TITLE_KEY, listaFilm.get(position).getTitolo());
                 intent.putExtra(Singleton.DESCRIPTION_KEY, listaFilm.get(position).getDescrizione());
                 context.startActivity(intent);
-            }
-        });
-
-        //Long click
-        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-
-                AggiungiPreferitoDialogFragment dialogFragment = new AggiungiPreferitoDialogFragment(listaFilm.get(position).getTitolo(), "Vuoi mettere questo film nella sezione preferiti?️", listaFilm.get(position).getIdFilm());
-                dialogFragment.show(fragmentManager, AggiungiPreferitoDialogFragment.class.getName());
-
-                return true;
             }
         });
     }

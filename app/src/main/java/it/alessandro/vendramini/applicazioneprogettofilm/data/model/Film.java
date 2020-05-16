@@ -21,7 +21,9 @@ public class Film {
     @SerializedName("overview")
     private String descrizione;
 
-    public Film(long idFilm, String titolo, Double valutazione, String dataRilascio, String descrizione, String immaginePrimoPoster, String immagineSecondoPoster) {
+    private boolean isPreferito;
+
+    public Film(long idFilm, String titolo, Double valutazione, String dataRilascio, String descrizione, String immaginePrimoPoster, String immagineSecondoPoster, boolean isPreferito) {
         this.idFilm = idFilm;
         this.titolo = titolo;
         this.valutazione = valutazione;
@@ -29,6 +31,7 @@ public class Film {
         this.descrizione = descrizione;
         this.immaginePrimoPoster = immaginePrimoPoster;
         this.immagineSecondoPoster = immagineSecondoPoster;
+        this.isPreferito = isPreferito;
     }
 
     public long getIdFilm() {
@@ -48,7 +51,7 @@ public class Film {
     }
 
     public String getImmaginePrimoPoster() {
-        return "https://image.tmdb.org/t/p/w500/" + immaginePrimoPoster;
+        return immaginePrimoPoster;
     }
 
     public void setImmaginePrimoPoster(String immaginePrimoPoster) {
@@ -56,7 +59,7 @@ public class Film {
     }
 
     public String getImmagineSecondoPoster() {
-        return "https://image.tmdb.org/t/p/w500/" + immagineSecondoPoster;
+        return immagineSecondoPoster;
     }
 
     public void setImmagineSecondoPoster(String immagineSecondoPoster) {
@@ -85,5 +88,13 @@ public class Film {
 
     public void setDescrizione(String descrizione) {
         this.descrizione = descrizione;
+    }
+
+    public boolean isPreferito() {
+        return isPreferito;
+    }
+
+    public void setPreferito(boolean preferito) {
+        isPreferito = preferito;
     }
 }
