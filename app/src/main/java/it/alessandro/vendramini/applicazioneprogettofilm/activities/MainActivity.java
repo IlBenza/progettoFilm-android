@@ -249,10 +249,10 @@ public class MainActivity extends AppCompatActivity implements IAggiungiPreferit
         //Click sul cerca
         if(item.getItemId() == R.id.search_icon){
 
-            SearchView searchView = (SearchView) item.getActionView();
+            androidx.appcompat.widget.SearchView searchView = (androidx.appcompat.widget.SearchView) item.getActionView();
             searchView.setQueryHint("Cerca film");
 
-            searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            searchView.setOnQueryTextListener(new androidx.appcompat.widget.SearchView.OnQueryTextListener() {
                 @Override
                 public boolean onQueryTextSubmit(String query) {
                     return false;
