@@ -1,16 +1,25 @@
 package it.alessandro.vendramini.applicazioneprogettofilm.activities;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.ContentValues;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,11 +28,15 @@ import it.alessandro.vendramini.applicazioneprogettofilm.R;
 import it.alessandro.vendramini.applicazioneprogettofilm.adapters.FilmAdapter;
 import it.alessandro.vendramini.applicazioneprogettofilm.adapters.FilmPreferitoAdapter;
 import it.alessandro.vendramini.applicazioneprogettofilm.data.model.Film;
+import it.alessandro.vendramini.applicazioneprogettofilm.fragments.AggiungiPreferitoDialogFragment;
+import it.alessandro.vendramini.applicazioneprogettofilm.fragments.IAggiungiPreferitoDialogFragmentListener;
+import it.alessandro.vendramini.applicazioneprogettofilm.fragments.IRimuoviTuttiPreferitiDialogFragmentListener;
+import it.alessandro.vendramini.applicazioneprogettofilm.fragments.RimuoviTuttiPreferitiDialogFragment;
 import it.alessandro.vendramini.applicazioneprogettofilm.local.FilmDB;
 import it.alessandro.vendramini.applicazioneprogettofilm.local.FilmTableHelper;
 import it.alessandro.vendramini.applicazioneprogettofilm.util.Singleton;
 
-public class FilmPreferitiActivity extends AppCompatActivity {
+public class FilmPreferitiActivity extends AppCompatActivity implements IAggiungiPreferitoDialogFragmentListener, IRimuoviTuttiPreferitiDialogFragmentListener {
 
     final String tableName = FilmTableHelper.TABLE_NAME;
     final String sortOrder = FilmTableHelper.ID_FILM + " ASC ";
@@ -36,6 +49,9 @@ public class FilmPreferitiActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_film_preferiti);
+
+        //Nome pagina
+        getSupportActionBar().setTitle(R.string.app_json_preferito);
 
         recyclerView_listaFilmPreferiti = findViewById(R.id.recyclerView_listaFilmPreferiti);
 
@@ -82,5 +98,60 @@ public class FilmPreferitiActivity extends AppCompatActivity {
             }
         }
         return listaTemporanea;
+    }
+
+    //Menu in alto a destra
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_preferiti, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+
+        if(item.getItemId() == R.id.cancella_icon){
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            RimuoviTuttiPreferitiDialogFragment dialogFragment = new RimuoviTuttiPreferitiDialogFragment("ATTENZIONE", "Vuoi davvero rimuovere rimuovere tutti i film preferiti?️");
+            dialogFragment.show(fragmentManager, RimuoviTuttiPreferitiDialogFragment.class.getName());
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onPositivePressed(long filmId) {
+        //Rimuovi dai preferiti
+        Toast.makeText(this, "Rimosso", Toast.LENGTH_SHORT).show();
+
+        //Aggiorno i dati
+        SQLiteDatabase sqLiteDatabase = new FilmDB(this).getReadableDatabase();
+        String nameId = Long.toString(filmId);
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(FilmTableHelper.PREFERITO, false);
+
+        sqLiteDatabase.update(tableName, contentValues, FilmTableHelper.ID_FILM + " = ?", new String[] { nameId });
+        finish();
+        startActivity(getIntent());
+    }
+
+    @Override
+    public void onPositivePressedRimuovi() {
+        //Rimuovi tutto dai preferiti
+        Toast.makeText(this, "Rimosso Tutto", Toast.LENGTH_SHORT).show();
+
+        //Aggiorno i dati
+        SQLiteDatabase sqLiteDatabase = new FilmDB(this).getReadableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(FilmTableHelper.PREFERITO, false);
+
+        sqLiteDatabase.update(tableName, contentValues, null, null);
+        finish();
+    }
+
+    @Override
+    public void onNegativePressed() {
+        //Nulla
     }
 }

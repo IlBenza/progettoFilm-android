@@ -25,6 +25,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.SimpleTimeZone;
 
@@ -43,7 +44,7 @@ public class FilmAdapter extends RecyclerView.Adapter<FilmViewHolder> implements
     private Context context;
     private FragmentManager fragmentManager;
     private List<Film> listaFilm = new ArrayList<>();
-    private List<Film> listaFilmEx;
+    private List<Film> listaFilmAll;
     private int itemSelezionato = -1;
 
     public FilmAdapter(Context context) {
@@ -65,6 +66,8 @@ public class FilmAdapter extends RecyclerView.Adapter<FilmViewHolder> implements
     @NonNull
     @Override
     public FilmViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+
+        this.listaFilmAll = new ArrayList<>(listaFilm);
 
         //Faccio l'nflate e assegno le variabili
         View convertView = LayoutInflater.from(context).inflate(R.layout.elenco_film_layout, parent, false);
@@ -113,11 +116,15 @@ public class FilmAdapter extends RecyclerView.Adapter<FilmViewHolder> implements
             holder.textView_valutazione.setText("10.");
         }
 
+        //Colore extra
+        /*
         holder.layout_singoloFilm.setBackgroundResource(R.drawable.rounded_background);
 
         if (itemSelezionato == position) {
             holder.layout_singoloFilm.setBackgroundResource(R.drawable.rounded_background_pressed);
         }
+
+         */
 
         //Click sul singolo oggetto
         holder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -175,11 +182,11 @@ public class FilmAdapter extends RecyclerView.Adapter<FilmViewHolder> implements
             List<Film> listaFiltrata = new ArrayList<>();
 
             if (constraint == null || constraint.length() == 0) {
-                listaFiltrata.addAll(listaFilmEx);
+                listaFiltrata.addAll(listaFilmAll);
             } else {
                 String filterPattern = constraint.toString().toLowerCase().trim();
 
-                for (Film film: listaFilmEx) {
+                for (Film film: listaFilmAll) {
                     if (film.getTitolo().toLowerCase().contains(filterPattern)) {
                         listaFiltrata.add(film);
                     }
@@ -196,7 +203,7 @@ public class FilmAdapter extends RecyclerView.Adapter<FilmViewHolder> implements
         protected void publishResults(CharSequence constraint, FilterResults results) {
 
             listaFilm.clear();
-            listaFilm.addAll((List) results.values);
+            listaFilm.addAll((Collection<? extends Film>) results.values);
             notifyDataSetChanged();
         }
     };

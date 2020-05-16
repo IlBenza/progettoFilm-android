@@ -3,4 +3,6 @@
     <string name="app_name">Applicazione Progetto Film</string>
     <string name="app_title">The movie DB</string>
     <string name="app_json_type_name">Upcoming movies</string>
+    <string name="app_json_dettaglio">Film detail</string>
+    <string name="app_json_preferito">Favourite movies</string>
 </resources>

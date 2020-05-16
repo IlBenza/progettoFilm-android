@@ -25,6 +25,9 @@ public class DettaglioActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dettaglio);
 
+        //Nome pagina
+        getSupportActionBar().setTitle(R.string.app_json_dettaglio);
+
         imageView_fotoCopertinaDue = findViewById(R.id.imageView_fotoCopertinaDue);
         textView_titolo = findViewById(R.id.textView_titolo);
         getTextView_descrizione = findViewById(R.id.textView_descrizione);

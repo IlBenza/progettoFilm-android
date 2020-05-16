@@ -15,22 +15,24 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import it.alessandro.vendramini.applicazioneprogettofilm.R;
 import it.alessandro.vendramini.applicazioneprogettofilm.activities.DettaglioActivity;
+import it.alessandro.vendramini.applicazioneprogettofilm.activities.FilmPreferitiActivity;
 import it.alessandro.vendramini.applicazioneprogettofilm.activities.MainActivity;
 import it.alessandro.vendramini.applicazioneprogettofilm.data.model.Film;
 import it.alessandro.vendramini.applicazioneprogettofilm.fragments.AggiungiPreferitoDialogFragment;
 import it.alessandro.vendramini.applicazioneprogettofilm.util.Singleton;
 
-public class FilmPreferitoAdapter extends RecyclerView.Adapter<FilmViewHolder> implements Filterable {
+public class FilmPreferitoAdapter extends RecyclerView.Adapter<FilmViewHolder> {
 
     public static final String httpsHead = "https://image.tmdb.org/t/p/w500/";
 
     private Context context;
+    private FragmentManager fragmentManager;
     private List<Film> listaFilm = new ArrayList<>();
-    private List<Film> listaFilmEx;
     private int itemSelezionato = -1;
 
     public FilmPreferitoAdapter(Context context) {
@@ -54,6 +56,8 @@ public class FilmPreferitoAdapter extends RecyclerView.Adapter<FilmViewHolder> i
         filmViewHolder.textView_dataRilascio = convertView.findViewById(R.id.textView_dataRilascio);
         filmViewHolder.textView_valutazione = convertView.findViewById(R.id.textView_valutazione);
         filmViewHolder.layout_singoloFilm = convertView.findViewById(R.id.layout_singoloFilm);
+
+        fragmentManager = ((FilmPreferitiActivity) context).getSupportFragmentManager();
 
         return filmViewHolder;
     }
@@ -90,12 +94,6 @@ public class FilmPreferitoAdapter extends RecyclerView.Adapter<FilmViewHolder> i
             holder.textView_valutazione.setText("10.");
         }
 
-        holder.layout_singoloFilm.setBackgroundResource(R.drawable.rounded_background);
-
-        if (itemSelezionato == position) {
-            holder.layout_singoloFilm.setBackgroundResource(R.drawable.rounded_background_pressed);
-        }
-
         //Click sul singolo oggetto
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -114,6 +112,17 @@ public class FilmPreferitoAdapter extends RecyclerView.Adapter<FilmViewHolder> i
                 context.startActivity(intent);
             }
         });
+
+        //Long click
+        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+
+                AggiungiPreferitoDialogFragment dialogFragment = new AggiungiPreferitoDialogFragment(listaFilm.get(position).getTitolo(), "Vuoi rimuovere questo film dalla sezione preferiti?️", listaFilm.get(position).getIdFilm());
+                dialogFragment.show(fragmentManager, AggiungiPreferitoDialogFragment.class.getName());
+                return true;
+            }
+        });
     }
 
     @Override
@@ -127,42 +136,4 @@ public class FilmPreferitoAdapter extends RecyclerView.Adapter<FilmViewHolder> i
     public int getItemCount() {
         return listaFilm.size();
     }
-
-    @Override
-    public Filter getFilter() {
-        return titoloFilter;
-    }
-
-    private Filter titoloFilter = new Filter() {
-        @Override
-        protected FilterResults performFiltering(CharSequence constraint) {
-
-            List<Film> listaFiltrata = new ArrayList<>();
-
-            if (constraint == null || constraint.length() == 0) {
-                listaFiltrata.addAll(listaFilmEx);
-            } else {
-                String filterPattern = constraint.toString().toLowerCase().trim();
-
-                for (Film film: listaFilmEx) {
-                    if (film.getTitolo().toLowerCase().contains(filterPattern)) {
-                        listaFiltrata.add(film);
-                    }
-                }
-            }
-
-            FilterResults results = new FilterResults();
-            results.values = listaFiltrata;
-
-            return results;
-        }
-
-        @Override
-        protected void publishResults(CharSequence constraint, FilterResults results) {
-
-            listaFilm.clear();
-            listaFilm.addAll((List) results.values);
-            notifyDataSetChanged();
-        }
-    };
 }

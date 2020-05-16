@@ -2,4 +2,6 @@
     <string name="app_name">Applicazione Progetto Film</string>
     <string name="app_title">The movie DB</string>
     <string name="app_json_type_name">Film in arrivo</string>
+    <string name="app_json_dettaglio">Dettaglio film</string>
+    <string name="app_json_preferito">Film preferiti</string>
 </resources>

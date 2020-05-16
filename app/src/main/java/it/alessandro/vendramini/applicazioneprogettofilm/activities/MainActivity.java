@@ -67,6 +67,8 @@ public class MainActivity extends AppCompatActivity implements IAggiungiPreferit
                 progressBar_caricamento.setVisibility(View.GONE);
                 imageView_logo.setVisibility(View.GONE);
                 recyclerView_listaFilm.setVisibility(View.VISIBLE);
+
+                //Nome pagina
                 getSupportActionBar().setTitle(R.string.app_json_type_name);
 
                 //Salvo i dati nel db
@@ -96,7 +98,6 @@ public class MainActivity extends AppCompatActivity implements IAggiungiPreferit
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
 
         webService = WebService.getInstance();
 
@@ -224,6 +225,7 @@ public class MainActivity extends AppCompatActivity implements IAggiungiPreferit
         return listaTemporanea;
     }
 
+    //Menu in alto a destra
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 
@@ -242,7 +244,10 @@ public class MainActivity extends AppCompatActivity implements IAggiungiPreferit
             Intent intent = new Intent(this, FilmPreferitiActivity.class);
             startActivity(intent);
 
-        } else if(item.getItemId() == R.id.search_icon){
+        }
+
+        //Click sul cerca
+        if(item.getItemId() == R.id.search_icon){
 
             SearchView searchView = (SearchView) item.getActionView();
             searchView.setQueryHint("Cerca film");
@@ -258,7 +263,6 @@ public class MainActivity extends AppCompatActivity implements IAggiungiPreferit
                     filmAdapter.getFilter().filter(newText);
                     return true;
                 }
-
             });
         }
 
@@ -268,18 +272,11 @@ public class MainActivity extends AppCompatActivity implements IAggiungiPreferit
     @Override
     public void onPositivePressed(long filmId) {
         //Salva nei preferiti
-        Toast.makeText(this, "SI", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "Salvato", Toast.LENGTH_SHORT).show();
 
         //Aggiorno o dati
         SQLiteDatabase sqLiteDatabase = new FilmDB(this).getReadableDatabase();
-
         String nameId = Long.toString(filmId);
-        //Cursor cursor = sqLiteDatabase.query(tableName, null, FilmTableHelper.ID_FILM + " = ?", new String[] { nameId },
-                //null, null, sortOrder);
-
-
-
-
         ContentValues contentValues = new ContentValues();
         contentValues.put(FilmTableHelper.PREFERITO, true);
 
@@ -289,6 +286,5 @@ public class MainActivity extends AppCompatActivity implements IAggiungiPreferit
     @Override
     public void onNegativePressed() {
         //Nulla
-        Toast.makeText(this, "NO", Toast.LENGTH_SHORT).show();
     }
 }
