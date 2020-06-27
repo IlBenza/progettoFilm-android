@@ -31,19 +31,19 @@
         app:layout_constraintTop_toBottomOf="@+id/textView_valutazione" />
 
     <TextView
-        android:id="@+id/textView_valutazione"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:elevation="4dp"
-        android:textColor="@color/colorWhiteBackground"
-        android:padding="8dp"
-        android:text="7.5"
-        android:textStyle="bold"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toBottomOf="@+id/imageView_fotoCopertina"
-        app:layout_constraintStart_toStartOf="@+id/imageView_fotoCopertina"
-        app:layout_constraintTop_toBottomOf="@+id/imageView_fotoCopertina" />
+    android:id="@+id/textView_valutazione"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="24dp"
+    android:elevation="4dp"
+    android:textColor="@color/colorWhiteBackground"
+    android:padding="8dp"
+    android:text="7.5"
+    android:textStyle="bold"
+    android:textSize="20sp"
+    app:layout_constraintBottom_toBottomOf="@+id/imageView_fotoCopertina"
+    app:layout_constraintStart_toStartOf="@+id/imageView_fotoCopertina"
+    app:layout_constraintTop_toBottomOf="@+id/imageView_fotoCopertina" />
 
     <TextView
         android:id="@+id/textView_dataRilascio"

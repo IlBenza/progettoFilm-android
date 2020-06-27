@@ -116,15 +116,7 @@ public class FilmAdapter extends RecyclerView.Adapter<FilmViewHolder> implements
             holder.textView_valutazione.setText("10.");
         }
 
-        //Colore extra
-        /*
-        holder.layout_singoloFilm.setBackgroundResource(R.drawable.rounded_background);
 
-        if (itemSelezionato == position) {
-            holder.layout_singoloFilm.setBackgroundResource(R.drawable.rounded_background_pressed);
-        }
-
-         */
 
         //Click sul singolo oggetto
         holder.itemView.setOnClickListener(new View.OnClickListener() {

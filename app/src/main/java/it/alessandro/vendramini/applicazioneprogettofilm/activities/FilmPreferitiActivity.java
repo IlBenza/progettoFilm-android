@@ -113,7 +113,7 @@ public class FilmPreferitiActivity extends AppCompatActivity implements IAggiung
 
         if(item.getItemId() == R.id.cancella_icon){
             FragmentManager fragmentManager = getSupportFragmentManager();
-            RimuoviTuttiPreferitiDialogFragment dialogFragment = new RimuoviTuttiPreferitiDialogFragment("ATTENZIONE", "Vuoi davvero rimuovere rimuovere tutti i film preferiti?️");
+            RimuoviTuttiPreferitiDialogFragment dialogFragment = new RimuoviTuttiPreferitiDialogFragment("ATTENZIONE", "Vuoi davvero rimuovere tutti i film preferiti?️");
             dialogFragment.show(fragmentManager, RimuoviTuttiPreferitiDialogFragment.class.getName());
         }
 
@@ -123,7 +123,7 @@ public class FilmPreferitiActivity extends AppCompatActivity implements IAggiung
     @Override
     public void onPositivePressed(long filmId) {
         //Rimuovi dai preferiti
-        Toast.makeText(this, "Rimosso", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "Film Rimosso", Toast.LENGTH_SHORT).show();
 
         //Aggiorno i dati
         SQLiteDatabase sqLiteDatabase = new FilmDB(this).getReadableDatabase();
@@ -139,7 +139,7 @@ public class FilmPreferitiActivity extends AppCompatActivity implements IAggiung
     @Override
     public void onPositivePressedRimuovi() {
         //Rimuovi tutto dai preferiti
-        Toast.makeText(this, "Rimosso Tutto", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "Rimosso tutti i film", Toast.LENGTH_SHORT).show();
 
         //Aggiorno i dati
         SQLiteDatabase sqLiteDatabase = new FilmDB(this).getReadableDatabase();
